@@ -12,10 +12,18 @@ def main(argv: list[str] | None = None) -> int:
         "command",
         nargs="?",
         default="make-data",
-        choices=["make-data", "inventory"],
-        help="make-data rebuilds cleaned and processed layers. inventory writes the file inventory only.",
+        choices=["make-data", "inventory", "train"],
+        help="make-data rebuilds cleaned and processed layers. inventory writes the file inventory. train runs Deliverable 3 ML modeling.",
     )
     args = parser.parse_args(argv)
+
+    if args.command == "train":
+        from climateshield.models.train_and_evaluate import check_dependencies, load_data, feature_engineering, train_and_evaluate
+        check_dependencies()
+        df = load_data()
+        df = feature_engineering(df)
+        train_and_evaluate(df)
+        return 0
 
     if args.command == "inventory":
         from climateshield.pipeline.extract import ensure_raw_extracted
